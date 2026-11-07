@@ -43,6 +43,16 @@ def test_list_shows_components_with_their_dependencies() -> None:
     assert "mise" not in bat_row
 
 
+@pytest.mark.usefixtures("machine_state")
+def test_list_shows_what_is_enabled_on_the_machine() -> None:
+    invoke(["enable", "sudo"])
+    invoke(["disable", "bat"])
+
+    result = invoke(["list"])
+
+    assert "Enabled: default, sudo, -bat" in result.output
+
+
 def test_the_cli_needs_a_setup() -> None:
     result = CliRunner().invoke(cli, ["list"])
 

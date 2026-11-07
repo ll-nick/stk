@@ -295,6 +295,8 @@ def list_components(setup: Setup) -> None:
     console.print(table)
     if enabled_names is None:
         console.print("Nothing is enabled on this machine yet, see `stk enable`.")
+    else:
+        console.print(f"Enabled: {', '.join(enabled_entries())}", style="dim")
 
 
 @cli.command()
