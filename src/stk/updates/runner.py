@@ -30,14 +30,12 @@ def plan_update_steps(steps: Sequence[UpdateStep]) -> UpdatePlan:
     runnable: list[UpdateStep] = []
     unavailable: list[UnavailableStep] = []
     for step in steps:
-        unmet_requirement = step.unmet_requirement()
+        if step.unmet_requirement() is not None:
+            # Not applicable here, like a component `stk apply` leaves out
+            continue
         if step.uses_sudo and not sudo_enabled:
             unavailable.append(
                 UnavailableStep(step.name, f"needs `stk enable {SUDO_ENTRY}`")
-            )
-        elif unmet_requirement is not None:
-            unavailable.append(
-                UnavailableStep(step.name, f"needs {unmet_requirement.description}")
             )
         else:
             runnable.append(step)

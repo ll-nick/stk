@@ -73,8 +73,7 @@ def test_sudo_and_impossible_steps_are_left_out_of_the_plan(
 
     assert [step.name for step in plan.steps] == ["available"]
     assert {entry.name: entry.reason for entry in plan.unavailable} == {
-        "root": "needs `stk enable sudo`",
-        "impossible": "needs a thing",
+        "root": "needs `stk enable sudo`"
     }
 
     enable(("sudo",))
