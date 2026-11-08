@@ -1,6 +1,6 @@
 [tools]
 node = { version = "lts", install_env = { MISE_NODE_COMPILE = "false" } }
-pnpm = "latest"
+pnpm = "12.18.0"
 
 [env]
 MISE_NPM_PACKAGE_MANAGER = "pnpm"

@@ -1,9 +1,15 @@
+from pathlib import Path
+
 from stk.engine.component import Component
 from stk.engine.update_step import StepOutcome, UpdateContext, UpdateStep
 from stk.helpers.commands import run_command
 from stk.helpers.mise import MISE_INSTALL_SCRIPT_URL, MISE_IS_INSTALLED, mise_executable
+from stk.updates.version_bump import commit_and_offer_push
 
 PREBUILT_BINARIES_ONLY = {"MISE_NODE_COMPILE": "false", "MISE_PYTHON_COMPILE": "false"}
+# The configs in conf.d link here, so bumping rewrites the pinned versions in place
+COMPONENTS_DIRECTORY = Path(__file__).parents[1]
+COMPONENT_MISE_CONFIGS = "*/files/mise.toml"
 
 
 def apply_mise() -> None:
@@ -22,7 +28,15 @@ def update_mise(context: UpdateContext) -> StepOutcome:
     context.section("Updating Mise Packages 📦")
     mise = str(mise_executable())
     context.run([mise, "self-update", "--yes"], environment=PREBUILT_BINARIES_ONLY)
-    context.run([mise, "upgrade", "--yes"], environment=PREBUILT_BINARIES_ONLY)
+    upgrade = [mise, "upgrade", "--yes", *(["--bump"] if context.bump_versions else [])]
+    # From home, so that a project config in the current directory is left alone
+    context.run(
+        upgrade, working_directory=Path.home(), environment=PREBUILT_BINARIES_ONLY
+    )
+    if context.bump_versions:
+        commit_and_offer_push(context, COMPONENTS_DIRECTORY, COMPONENT_MISE_CONFIGS)
+    # Pins moved by a pull leave their previous versions installed
+    context.run([mise, "prune", "--yes"])
     return StepOutcome.UPDATED
 
 

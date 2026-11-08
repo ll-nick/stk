@@ -1,2 +1,2 @@
 [tools]
-"github:kovidgoyal/kitty" = { version = "latest", asset_pattern = "kitty*x86_64*.txz" }
+"github:kovidgoyal/kitty" = { version = "0.50.0", asset_pattern = "kitty*x86_64*.txz" }

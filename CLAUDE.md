@@ -114,6 +114,8 @@ The `stk` component installs `~/.local/bin/stk`, a shim that runs the CLI from t
 - Linting policy: fix properly first, then a line-level ignore with a reason, never disable rules globally.
   Untyped pyinfra calls are confined to a few adapter modules with line-level ignores.
 - Keep `pyinfra<4` pinned: the engine relies on pyinfra internals.
+- Pin mise tools to exact versions in their `mise.toml`.
+  `stk update --bump` moves them (`mise upgrade --bump` writes through the conf.d symlinks) and commits them.
 - `HOME=` does not sandbox mise (it reads the config via the passwd entry); use Docker for hermetic tests.
 - A change is only done when `uv run poe check` and `uv run pytest tests` are green.
   Run `ci/run.sh all` only when a change affects what `stk apply` does on a machine:

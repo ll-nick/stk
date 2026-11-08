@@ -43,11 +43,23 @@ def test_mise_is_updated_with_prebuilt_binaries() -> None:
     assert [command[1:] for command in context.commands] == [
         ["self-update", "--yes"],
         ["upgrade", "--yes"],
+        ["prune", "--yes"],
     ]
     assert all(
         env == {"MISE_NODE_COMPILE": "false", "MISE_PYTHON_COMPILE": "false"}
-        for env in context.environments
+        for env in context.environments[:2]
     )
+
+
+def test_mise_bump_rewrites_and_commits_the_pinned_versions() -> None:
+    context = RecordingContext()
+    context.bump_versions = True
+
+    update_mise(context)
+
+    assert context.commands[1][1:] == ["upgrade", "--yes", "--bump"]
+    assert ["git", "add", "*/files/mise.toml"] in context.commands
+    assert ["git", "commit", "-m", "Version bump"] in context.commands
 
 
 def test_environment_is_not_modified() -> None:
