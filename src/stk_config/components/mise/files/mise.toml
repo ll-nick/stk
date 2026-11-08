@@ -1,0 +1,5 @@
+[settings]
+# Their plugins may build from source, where the other backends download releases
+disable_backends = ["asdf", "vfox"]
+node.compile = false
+python.compile = false

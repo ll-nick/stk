@@ -35,7 +35,7 @@ def test_mise_is_updated_before_the_components_using_it() -> None:
     assert names.index("mise") < names.index("neovim")
 
 
-def test_mise_is_updated_with_prebuilt_binaries() -> None:
+def test_mise_is_updated() -> None:
     context = RecordingContext()
 
     assert update_mise(context) is StepOutcome.UPDATED
@@ -45,10 +45,6 @@ def test_mise_is_updated_with_prebuilt_binaries() -> None:
         ["upgrade", "--yes"],
         ["prune", "--yes"],
     ]
-    assert all(
-        env == {"MISE_NODE_COMPILE": "false", "MISE_PYTHON_COMPILE": "false"}
-        for env in context.environments[:2]
-    )
 
 
 def test_mise_bump_rewrites_and_commits_the_pinned_versions() -> None:

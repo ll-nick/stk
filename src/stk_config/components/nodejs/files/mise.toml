@@ -1,5 +1,5 @@
 [tools]
-node = { version = "lts", install_env = { MISE_NODE_COMPILE = "false" } }
+node = "lts"
 pnpm = "12.18.0"
 
 [env]
