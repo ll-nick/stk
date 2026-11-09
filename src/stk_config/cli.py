@@ -10,5 +10,6 @@ def main() -> None:
         obj=Setup(
             components=discover_components("stk_config.components"),
             checkout=Path.home() / ".config" / "stk",
+            nixos_flake=Path.home() / ".config" / "nix",
         )
     )

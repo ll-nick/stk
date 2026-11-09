@@ -11,3 +11,5 @@ class Setup:
     components: tuple[Component, ...]
     # The git checkout of the configuration, which `stk update` pulls
     checkout: Path
+    # Where `stk update` rebuilds NixOS from, and bumps flake.lock in
+    nixos_flake: Path | None = None

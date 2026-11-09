@@ -1,4 +1,5 @@
 import sys
+from dataclasses import replace
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
@@ -199,12 +200,47 @@ def test_core_steps_run_before_the_steps_of_components() -> None:
 def test_apt_upgrade_runs_without_further_prompts() -> None:
     context = RecordingContext()
 
-    system.update_system(context)
+    system.update_with_apt(context, SETUP)
 
     assert context.commands == [
         ["sudo", "apt", "update"],
         ["sudo", "apt", "upgrade", "--yes"],
     ]
+
+
+def test_nixos_rebuilds_from_the_flake_and_bumps_its_lock() -> None:
+    context = RecordingContext()
+    context.bump_versions = True
+
+    system.update_nixos(context, replace(SETUP, nixos_flake=Path("/flake")))
+
+    assert context.commands[0] == ["nix", "flake", "update"]
+    assert ["git", "commit", "-m", "Version bump"] in context.commands
+    assert ["sudo", "nixos-rebuild", "switch", "--flake", "/flake"] in context.commands
+
+
+def test_nixos_without_bumping_leaves_the_flake_as_it_is() -> None:
+    context = RecordingContext()
+
+    system.update_nixos(context, replace(SETUP, nixos_flake=Path("/flake")))
+
+    assert context.commands[0] == [
+        "sudo",
+        "nixos-rebuild",
+        "switch",
+        "--flake",
+        "/flake",
+    ]
+
+
+def test_nixos_without_a_flake_rebuilds_its_own_configuration() -> None:
+    context = RecordingContext()
+    context.bump_versions = True
+
+    system.update_nixos(context, SETUP)
+
+    assert context.commands[0] == ["sudo", "nixos-rebuild", "switch"]
+    assert ["nix", "flake", "update"] not in context.commands
 
 
 def test_stk_pulls_the_checkout_and_applies_without_sudo_when_left_out(

@@ -2,25 +2,16 @@ from dataclasses import replace
 
 from stk.engine.component import Component
 from stk.engine.update_step import UpdateStep
-from stk.machine import has_executable
 from stk.setup import Setup
 from stk.updates.steps.stk import stk_update_step
-from stk.updates.steps.system import update_system
+from stk.updates.steps.system import system_update_step
 
 
 def core_update_steps(setup: Setup) -> tuple[UpdateStep, ...]:
     # Not owned by a component, and the first to run:
     # a newer configuration and fresh system packages are what the component steps
     # build on
-    return (
-        UpdateStep(
-            "system",
-            update_system,
-            requires=(has_executable("apt"),),
-            uses_sudo=True,
-        ),
-        stk_update_step(setup),
-    )
+    return (system_update_step(setup), stk_update_step(setup))
 
 
 def component_update_steps(
