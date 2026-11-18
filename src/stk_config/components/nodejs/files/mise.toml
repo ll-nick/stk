@@ -1,6 +1,6 @@
 [tools]
 node = "lts"
-pnpm = "12.18.0"
+pnpm = "12.21.0"
 
 [env]
 MISE_NPM_PACKAGE_MANAGER = "pnpm"
